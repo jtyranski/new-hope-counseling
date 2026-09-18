@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -21,9 +20,15 @@ export async function POST(request: Request) {
     }
 
     // Save to database
-    await prisma.contactSubmission.create({
-      data: { name, email, phone, subject, message },
-    });
+    try {
+      const { prisma } = await import('../../../lib/prisma');
+      await prisma.contactSubmission.create({
+        data: { name, email, phone, subject, message },
+      });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      // Continue even if database fails
+    }
 
     // Send email notification
     try {
