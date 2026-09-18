@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
       await resend.emails.send({
         from: 'onboarding@resend.dev',
-        to: 'jim@tyranski.com',
+        to: 'newhope@counselingmail.com',
         subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
         html: htmlBody,
       });
