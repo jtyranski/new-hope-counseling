@@ -30,17 +30,8 @@ export async function POST(request: Request) {
       // Continue even if database fails
     }
 
-    // Send email notification
+    // Send email notification via Resend
     try {
-      const appUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-      let appName = 'New Hope Counseling';
-      let senderEmail = 'noreply@newhopecounseling.com';
-      try {
-        const hostname = new URL(appUrl)?.hostname ?? '';
-        appName = 'New Hope Counseling';
-        senderEmail = `noreply@${hostname}`;
-      } catch { /* fallback */ }
-
       const htmlBody = `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
           <div style="background: #1E2D3A; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
@@ -63,19 +54,17 @@ export async function POST(request: Request) {
         </div>
       `;
 
-      await fetch('https://apps.abacus.ai/api/sendNotificationEmail', {
+      await fetch('https://api.resend.com/emails', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        },
         body: JSON.stringify({
-          deployment_token: process.env.ABACUSAI_API_KEY,
-          app_id: process.env.WEB_APP_ID,
-          notification_id: process.env.NOTIF_ID_CONTACT_FORM_SUBMISSION,
+          from: 'New Hope Counseling <onboarding@resend.dev>',
+          to: 'jim@tyranski.com',
           subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
-          body: htmlBody,
-          is_html: true,
-          recipient_email: 'jim@tyranski.com',
-          sender_email: senderEmail,
-          sender_alias: appName,
+          html: htmlBody,
         }),
       });
     } catch (emailError) {
