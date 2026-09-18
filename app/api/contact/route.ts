@@ -32,6 +32,9 @@ export async function POST(request: Request) {
 
     // Send email notification via Resend
     try {
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
       const htmlBody = `
         <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
           <div style="background: #1E2D3A; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
@@ -54,18 +57,11 @@ export async function POST(request: Request) {
         </div>
       `;
 
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        },
-        body: JSON.stringify({
-          from: 'New Hope Counseling <onboarding@resend.dev>',
-          to: 'jim@tyranski.com',
-          subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
-          html: htmlBody,
-        }),
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: 'jim@tyranski.com',
+        subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
+        html: htmlBody,
       });
     } catch (emailError) {
       console.error('Email notification error:', emailError);
