@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       if (sendViaSMS) {
         const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-        const smsBody = `New contact form submission from ${name}.\nEmail: ${email}\n${phone ? `Phone: ${phone}\n` : ''}Message: ${message}`;
+        const smsBody = `New contact from ${name}. Email: ${email}. Message: ${message.substring(0, 100)}`;
 
         console.log('Sending SMS to:', process.env.SMS_RECIPIENT);
         const msgResponse = await client.messages.create({
