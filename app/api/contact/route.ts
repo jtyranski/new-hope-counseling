@@ -30,42 +30,60 @@ export async function POST(request: Request) {
       // Continue even if database fails
     }
 
-    // Send email notification via Resend
+    // Send notification via email or SMS based on configuration
     try {
-      const { Resend } = await import('resend');
-      const resend = new Resend(process.env.RESEND_API_KEY);
+      const sendViaEmail = process.env.SEND_VIA_EMAIL === 'true';
+      const sendViaSMS = process.env.SEND_VIA_SMS === 'true';
 
-      const htmlBody = `
-        <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
-          <div style="background: #1E2D3A; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
-            <h2 style="color: #C4A265; margin: 0; font-family: Georgia, serif;">New Hope Counseling Ltd.</h2>
-            <p style="color: #8DA8C0; margin: 5px 0 0; font-size: 14px;">New Contact Form Submission</p>
-          </div>
-          <div style="background: white; padding: 24px; border-radius: 0 0 8px 8px;">
-            <p style="margin: 10px 0;"><strong>Name:</strong> ${name}</p>
-            <p style="margin: 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-            ${phone ? `<p style="margin: 10px 0;"><strong>Phone:</strong> ${phone}</p>` : ''}
-            ${subject ? `<p style="margin: 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ''}
-            <p style="margin: 10px 0;"><strong>Message:</strong></p>
-            <div style="background: #f0f4f7; padding: 15px; border-radius: 4px; border-left: 4px solid #C4A265;">
-              ${message?.replace?.(/\n/g, '<br/>') ?? message}
+      if (sendViaEmail) {
+        const { Resend } = await import('resend');
+        const resend = new Resend(process.env.RESEND_API_KEY);
+
+        const htmlBody = `
+          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px;">
+            <div style="background: #1E2D3A; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+              <h2 style="color: #C4A265; margin: 0; font-family: Georgia, serif;">New Hope Counseling Ltd.</h2>
+              <p style="color: #8DA8C0; margin: 5px 0 0; font-size: 14px;">New Contact Form Submission</p>
             </div>
-            <p style="color: #999; font-size: 12px; margin-top: 20px;">
-              Submitted at: ${new Date().toLocaleString()}
-            </p>
+            <div style="background: white; padding: 24px; border-radius: 0 0 8px 8px;">
+              <p style="margin: 10px 0;"><strong>Name:</strong> ${name}</p>
+              <p style="margin: 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+              ${phone ? `<p style="margin: 10px 0;"><strong>Phone:</strong> ${phone}</p>` : ''}
+              ${subject ? `<p style="margin: 10px 0;"><strong>Subject:</strong> ${subject}</p>` : ''}
+              <p style="margin: 10px 0;"><strong>Message:</strong></p>
+              <div style="background: #f0f4f7; padding: 15px; border-radius: 4px; border-left: 4px solid #C4A265;">
+                ${message?.replace?.(/\n/g, '<br/>') ?? message}
+              </div>
+              <p style="color: #999; font-size: 12px; margin-top: 20px;">
+                Submitted at: ${new Date().toLocaleString()}
+              </p>
+            </div>
           </div>
-        </div>
-      `;
+        `;
 
-      await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: 'newhope@counselingmail.com',
-        subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
-        html: htmlBody,
-      });
-    } catch (emailError) {
-      console.error('Email notification error:', emailError);
-      // Don't fail the form submission if email fails
+        await resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: process.env.EMAIL_RECIPIENT || 'newhope@counselingmail.com',
+          subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
+          html: htmlBody,
+        });
+      }
+
+      if (sendViaSMS) {
+        const twilio = await import('twilio');
+        const client = twilio.default(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+        const smsBody = `New contact form submission from ${name}.\nEmail: ${email}\n${phone ? `Phone: ${phone}\n` : ''}Message: ${message}`;
+
+        await client.messages.create({
+          body: smsBody,
+          from: process.env.TWILIO_PHONE_NUMBER,
+          to: process.env.SMS_RECIPIENT || '+12245176234',
+        });
+      }
+    } catch (notificationError) {
+      console.error('Notification error:', notificationError);
+      // Don't fail the form submission if notification fails
     }
 
     return NextResponse.json({ success: true, message: 'Message sent successfully!' });
