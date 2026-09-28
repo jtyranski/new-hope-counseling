@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+import twilio from 'twilio';
 
 export async function POST(request: Request) {
   try {
@@ -70,16 +71,17 @@ export async function POST(request: Request) {
       }
 
       if (sendViaSMS) {
-        const twilio = require('twilio');
         const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
         const smsBody = `New contact form submission from ${name}.\nEmail: ${email}\n${phone ? `Phone: ${phone}\n` : ''}Message: ${message}`;
 
-        await client.messages.create({
+        console.log('Sending SMS to:', process.env.SMS_RECIPIENT);
+        const msgResponse = await client.messages.create({
           body: smsBody,
           from: process.env.TWILIO_PHONE_NUMBER,
           to: process.env.SMS_RECIPIENT || '+12245176234',
         });
+        console.log('SMS sent with SID:', msgResponse.sid);
       }
     } catch (notificationError) {
       console.error('Notification error:', notificationError);
