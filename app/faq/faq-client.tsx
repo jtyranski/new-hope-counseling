@@ -303,7 +303,7 @@ function FaqItem({ faq, index }: { faq: { q: string; a: AnswerContent }; index: 
   );
 }
 
-function CategorySection({ category, index }: { category: { category: string; questions: { q: string; a: string }[] }; index: number }) {
+function CategorySection({ category, index }: { category: { category: string; questions: { q: string; a: string | React.ReactNode }[] }; index: number }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -379,7 +379,7 @@ export function FaqClient() {
                   className="inline-flex items-center gap-2 border-2 border-slate_blue-300 text-slate_blue-700 px-6 py-3 rounded-md font-semibold hover:bg-slate_blue-100 transition-all"
                 >
                   <Phone size={18} />
-                  224-517-6234
+                  (224) 517-6234
                 </a>
               </div>
             </div>
