@@ -51,18 +51,33 @@ export async function POST(request: Request) {
           </div>
         `;
 
-        await resend.emails.send({
-          from: 'onboarding@resend.dev',
-          to: process.env.EMAIL_RECIPIENT || 'newhope@counselingmail.com',
-          subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
-          html: htmlBody,
-        });
+        const emailRecipients = (process.env.EMAIL_RECIPIENT || 'newhope@counselingmail.com')
+          .split(',')
+          .map((e) => e.trim())
+          .filter((e) => e);
+
+        for (const recipient of emailRecipients) {
+          try {
+            await resend.emails.send({
+              from: 'onboarding@resend.dev',
+              to: recipient,
+              subject: `New Contact Form: ${subject || 'General Inquiry'} from ${name}`,
+              html: htmlBody,
+            });
+            console.log(`Email sent to ${recipient}`);
+          } catch (emailError) {
+            console.error(`Failed to send email to ${recipient}:`, emailError);
+          }
+        }
       }
 
       if (sendViaSMS) {
         const smsProvider = process.env.SMS_PROVIDER || 'twilio';
         const smsBody = `New contact from ${name}. Email: ${email}. Message: ${message.substring(0, 100)}`;
-        const smsRecipient = process.env.SMS_RECIPIENT || '+12245176234';
+        const smsRecipients = (process.env.SMS_RECIPIENT || '+12245176234')
+          .split(',')
+          .map((s) => s.trim())
+          .filter((s) => s);
 
         if (smsProvider === 'sinch') {
           const projectId = process.env.SINCH_PROJECT_ID;
@@ -73,54 +88,66 @@ export async function POST(request: Request) {
 
           const credentials = Buffer.from(`${accessKeyId}:${keySecret}`).toString('base64');
 
-          console.log('Sending SMS via Sinch to:', smsRecipient);
-          const response = await fetch(
-            `https://US.conversation.api.sinch.com/v1/projects/${projectId}/messages:send`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Basic ${credentials}`,
-              },
-              body: JSON.stringify({
-                app_id: appId,
-                recipient: {
-                  identified_by: {
-                    channel_identities: [
-                      {
-                        channel: 'SMS',
-                        identity: smsRecipient,
+          for (const recipient of smsRecipients) {
+            try {
+              console.log('Sending SMS via Sinch to:', recipient);
+              const response = await fetch(
+                `https://US.conversation.api.sinch.com/v1/projects/${projectId}/messages:send`,
+                {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${credentials}`,
+                  },
+                  body: JSON.stringify({
+                    app_id: appId,
+                    recipient: {
+                      identified_by: {
+                        channel_identities: [
+                          {
+                            channel: 'SMS',
+                            identity: recipient,
+                          },
+                        ],
                       },
-                    ],
-                  },
-                },
-                message: {
-                  text_message: {
-                    text: smsBody,
-                  },
-                },
-                channel_properties: {
-                  SMS_SENDER: sinchPhoneNumber,
-                },
-              }),
-            }
-          );
+                    },
+                    message: {
+                      text_message: {
+                        text: smsBody,
+                      },
+                    },
+                    channel_properties: {
+                      SMS_SENDER: sinchPhoneNumber,
+                    },
+                  }),
+                }
+              );
 
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(`Sinch API error: ${response.status} - ${JSON.stringify(data)}`);
+              const data = await response.json();
+              if (!response.ok) {
+                throw new Error(`Sinch API error: ${response.status} - ${JSON.stringify(data)}`);
+              }
+              console.log(`SMS sent via Sinch to ${recipient}:`, data);
+            } catch (smsError) {
+              console.error(`Failed to send SMS to ${recipient} via Sinch:`, smsError);
+            }
           }
-          console.log('SMS sent via Sinch:', data);
         } else {
           const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-          console.log('Sending SMS via Twilio to:', smsRecipient);
-          const msgResponse = await client.messages.create({
-            body: smsBody,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: smsRecipient,
-          });
-          console.log('SMS sent with SID:', msgResponse.sid);
+          for (const recipient of smsRecipients) {
+            try {
+              console.log('Sending SMS via Twilio to:', recipient);
+              const msgResponse = await client.messages.create({
+                body: smsBody,
+                from: process.env.TWILIO_PHONE_NUMBER,
+                to: recipient,
+              });
+              console.log(`SMS sent via Twilio to ${recipient} with SID:`, msgResponse.sid);
+            } catch (smsError) {
+              console.error(`Failed to send SMS to ${recipient} via Twilio:`, smsError);
+            }
+          }
         }
       }
     } catch (notificationError) {
