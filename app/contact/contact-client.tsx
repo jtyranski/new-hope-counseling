@@ -16,6 +16,8 @@ import {
   Loader2,
 } from 'lucide-react';
 
+const MESSAGE_CHAR_LIMIT = 500;
+
 export function ContactClient() {
   const [formData, setFormData] = useState({
     name: '',
@@ -26,6 +28,10 @@ export function ContactClient() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+
+  const messageLength = formData?.message?.length ?? 0;
+  const charsRemaining = MESSAGE_CHAR_LIMIT - messageLength;
+  const isNearLimit = messageLength > MESSAGE_CHAR_LIMIT * 0.8;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e?.target ?? {};
@@ -222,9 +228,13 @@ export function ContactClient() {
                           onChange={handleChange}
                           required
                           rows={5}
+                          maxLength={MESSAGE_CHAR_LIMIT}
                           className="w-full px-4 py-3 rounded-md border border-slate_blue-200 bg-white focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 outline-none transition-all text-slate_blue-800 resize-vertical"
                           placeholder="How can we help you?"
                         />
+                        <div className={`text-xs mt-2 font-medium ${isNearLimit ? 'text-orange-500' : 'text-slate_blue-400'}`}>
+                          {charsRemaining} characters remaining ({messageLength}/{MESSAGE_CHAR_LIMIT})
+                        </div>
                       </div>
 
                       {status === 'error' && (
