@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatedSection } from '../components/animated-section';
 import { PageHero } from '../components/page-hero';
@@ -28,10 +28,20 @@ export function ContactClient() {
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [recaptchaReady, setRecaptchaReady] = useState(false);
 
   const messageLength = formData?.message?.length ?? 0;
   const charsRemaining = MESSAGE_CHAR_LIMIT - messageLength;
   const isNearLimit = messageLength > MESSAGE_CHAR_LIMIT * 0.8;
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_GOOGLE_CAPTCHA_SITE_KEY}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => setRecaptchaReady(true);
+    document.head.appendChild(script);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e?.target ?? {};
@@ -44,10 +54,18 @@ export function ContactClient() {
     setErrorMsg('');
 
     try {
+      let recaptchaToken = '';
+      if (recaptchaReady && (window as any).grecaptcha) {
+        recaptchaToken = await (window as any).grecaptcha.execute(
+          process.env.NEXT_PUBLIC_GOOGLE_CAPTCHA_SITE_KEY,
+          { action: 'submit' }
+        );
+      }
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken }),
       });
 
       const data = await res?.json?.();

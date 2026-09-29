@@ -12,6 +12,26 @@ const formatPhoneNumber = (phone: string): string => {
   return phone;
 };
 
+const verifyRecaptcha = async (token: string): Promise<boolean> => {
+  if (!token || !process.env.GOOGLE_CAPTCHA_SECRET_KEY) {
+    return false;
+  }
+
+  try {
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${process.env.GOOGLE_CAPTCHA_SECRET_KEY}&response=${token}`,
+    });
+
+    const data = await response.json();
+    return data.success && data.score > 0.5;
+  } catch (error) {
+    console.error('reCAPTCHA verification error:', error);
+    return false;
+  }
+};
+
 export async function POST(request: Request) {
   try {
     const data = await request?.json?.();
@@ -21,10 +41,20 @@ export async function POST(request: Request) {
     const phone = data?.phone ?? '';
     const subject = data?.subject ?? '';
     const message = data?.message ?? '';
+    const recaptchaToken = data?.recaptchaToken ?? '';
 
     if (!name || !email || !message) {
       return NextResponse.json(
         { success: false, message: 'Name, email, and message are required.' },
+        { status: 400 }
+      );
+    }
+
+    const isHuman = await verifyRecaptcha(recaptchaToken);
+    if (!isHuman) {
+      console.warn('reCAPTCHA verification failed for submission');
+      return NextResponse.json(
+        { success: false, message: 'Verification failed. Please try again.' },
         { status: 400 }
       );
     }
