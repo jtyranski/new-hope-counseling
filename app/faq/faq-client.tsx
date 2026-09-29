@@ -236,7 +236,7 @@ const faqCategories = [
   },
 ];
 
-type AnswerContent = string | { paragraphs?: string[]; bullets?: string[]; closingParagraph?: string };
+type AnswerContent = string | React.ReactNode | { paragraphs?: string[]; bullets?: string[]; closingParagraph?: string };
 
 function FaqItem({ faq, index }: { faq: { q: string; a: AnswerContent }; index: number }) {
   const [open, setOpen] = useState(false);
@@ -303,7 +303,7 @@ function FaqItem({ faq, index }: { faq: { q: string; a: AnswerContent }; index: 
   );
 }
 
-function CategorySection({ category, index }: { category: { category: string; questions: { q: string; a: string | React.ReactNode }[] }; index: number }) {
+function CategorySection({ category, index }: { category: { category: string; questions: { q: string; a: AnswerContent }[] }; index: number }) {
   const [open, setOpen] = useState(false);
 
   return (
