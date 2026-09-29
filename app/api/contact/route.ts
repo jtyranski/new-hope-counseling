@@ -73,7 +73,7 @@ export async function POST(request: Request) {
 
       if (sendViaSMS) {
         const smsProvider = process.env.SMS_PROVIDER || 'twilio';
-        const smsBody = `Contact: ${name} | Email: ${email}${phone ? ` | Phone: ${phone}` : ''}${subject ? ` | Subject: ${subject}` : ''} | Msg: ${message.substring(0, 60)}`;
+        const smsBody = `Contact: ${name} | Email: ${email}${phone ? ` | Phone: ${phone}` : ''}${subject ? ` | Subject: ${subject}` : ''} | Msg: ${message}`;
         const smsRecipients = (process.env.SMS_RECIPIENT || '+12245176234')
           .split(',')
           .map((s) => s.trim())

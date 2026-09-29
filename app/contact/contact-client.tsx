@@ -16,7 +16,7 @@ import {
   Loader2,
 } from 'lucide-react';
 
-const MESSAGE_CHAR_LIMIT = 500;
+const MESSAGE_CHAR_LIMIT = 150;
 
 export function ContactClient() {
   const [formData, setFormData] = useState({
