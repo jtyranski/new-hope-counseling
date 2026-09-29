@@ -246,27 +246,31 @@ function FaqItem({ faq, index }: { faq: { q: string; a: AnswerContent }; index: 
       return <p className="text-slate_blue-600 text-sm leading-relaxed">{answer}</p>;
     }
 
-    return (
-      <div className="space-y-3">
-        {answer.paragraphs?.map((para, i) => (
-          <p key={i} className="text-slate_blue-600 text-sm leading-relaxed">
-            {para}
-          </p>
-        ))}
-        {answer.bullets && answer.bullets.length > 0 && (
-          <ul className="list-disc list-inside space-y-1 text-slate_blue-600 text-sm ml-2">
-            {answer.bullets.map((bullet, i) => (
-              <li key={i}>{bullet}</li>
-            ))}
-          </ul>
-        )}
-        {answer.closingParagraph && (
-          <p className="text-slate_blue-600 text-sm leading-relaxed">
-            {answer.closingParagraph}
-          </p>
-        )}
-      </div>
-    );
+    if (answer && typeof answer === 'object' && 'paragraphs' in answer) {
+      return (
+        <div className="space-y-3">
+          {answer.paragraphs?.map((para, i) => (
+            <p key={i} className="text-slate_blue-600 text-sm leading-relaxed">
+              {para}
+            </p>
+          ))}
+          {answer.bullets && answer.bullets.length > 0 && (
+            <ul className="list-disc list-inside space-y-1 text-slate_blue-600 text-sm ml-2">
+              {answer.bullets.map((bullet, i) => (
+                <li key={i}>{bullet}</li>
+              ))}
+            </ul>
+          )}
+          {answer.closingParagraph && (
+            <p className="text-slate_blue-600 text-sm leading-relaxed">
+              {answer.closingParagraph}
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    return <>{answer}</>;
   };
 
   return (
