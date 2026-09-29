@@ -20,17 +20,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Save to database
-    try {
-      const { prisma } = await import('../../../lib/prisma');
-      await prisma.contactSubmission.create({
-        data: { name, email, phone, subject, message },
-      });
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      // Continue even if database fails
-    }
-
     // Send notification via email or SMS based on configuration
     try {
       const sendViaEmail = process.env.SEND_VIA_EMAIL === 'true';
