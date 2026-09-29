@@ -3,6 +3,15 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import twilio from 'twilio';
 
+const formatPhoneNumber = (phone: string): string => {
+  if (!phone) return '';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  return phone;
+};
+
 export async function POST(request: Request) {
   try {
     const data = await request?.json?.();
@@ -73,7 +82,8 @@ export async function POST(request: Request) {
 
       if (sendViaSMS) {
         const smsProvider = process.env.SMS_PROVIDER || 'twilio';
-        const smsBody = `Contact: ${name} | Email: ${email}${phone ? ` | Phone: ${phone}` : ''}${subject ? ` | Subject: ${subject}` : ''} | Msg: ${message}`;
+        const formattedPhone = formatPhoneNumber(phone);
+        const smsBody = `Contact: ${name} | Email: ${email}${formattedPhone ? ` | Phone: ${formattedPhone}` : ''}${subject ? ` | Subject: ${subject}` : ''} | Msg: ${message}`;
         const smsRecipients = (process.env.SMS_RECIPIENT || '+12245176234')
           .split(',')
           .map((s) => s.trim())
