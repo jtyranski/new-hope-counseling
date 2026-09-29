@@ -53,7 +53,7 @@ export function AboutClient() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="text-slate_blue-200 text-lg sm:text-xl max-w-2xl leading-relaxed"
           >
-            Seeking counseling can take courage. Our approach is grounded in creating a space where you can feel safe, respected, and truly heard.
+            Conversations are guided with warmth, compassion, and a non-judgmental spirit so that every person&apos;s story can be explored without shame or criticism.
           </motion.p>
         </div>
       </section>
@@ -67,10 +67,13 @@ export function AboutClient() {
                 Our Counseling Approach
               </h2>
               <p className="text-slate_blue-600 leading-relaxed mb-4">
-                Conversations are guided with warmth, compassion, and a non-judgmental spirit so that every person&apos;s story can be explored without shame or criticism.
+                Seeking counseling can take courage. Many people come carrying experiences of pain, confusion, or feeling misunderstood. Our approach to counseling is grounded in creating a space where you can feel safe, respected, and truly heard. Conversations are guided with warmth, compassion, and a non-judgmental spirit so that every person&apos;s story can be explored without shame or criticism.
+              </p>
+              <p className="text-slate_blue-600 leading-relaxed mb-4">
+                For clients who desire it, faith can also be included in the counseling process. A Christian perspective is offered in a respectful and gentle way, recognizing that many people find comfort, meaning, and hope through their faith. Whether faith is a central part of your counseling journey or simply a quiet source of support, the goal remains the same—to walk alongside you with care as you move toward healing, growth, and deeper connection.
               </p>
               <p className="text-slate_blue-600 leading-relaxed">
-                For clients who desire it, faith can also be included in the counseling process. A Christian perspective is offered in a respectful and gentle way, recognizing that many people find comfort, meaning, and hope through their faith.
+                We integrate evidence-based therapies with compassionate listening, a trauma-informed perspective, and a Christ-centered foundation to help individuals develop insight, build practical skills, and move toward meaningful change.
               </p>
             </div>
           </AnimatedSection>

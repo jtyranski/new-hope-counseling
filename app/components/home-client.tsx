@@ -63,9 +63,6 @@ export function HomeClient() {
             <p className="text-white/90 text-lg sm:text-xl md:text-2xl font-light mt-4 max-w-2xl leading-relaxed">
               A safe and welcoming place where healing begins.
             </p>
-            <p className="text-slate_blue-200 text-base sm:text-lg mt-4 max-w-2xl leading-relaxed">
-              Whatever has brought you here, you are welcome. Our counseling practice is a place where people can come just as they are — without judgment or shame.
-            </p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -74,7 +71,7 @@ export function HomeClient() {
             className="flex flex-wrap gap-4 mt-8"
           >
             <Link
-              href="/contact"
+              href="/contact?subject=appointment-request"
               className="bg-gold-400 text-slate_blue-900 px-6 py-3 rounded-md font-semibold hover:bg-gold-300 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               <MessageCircle size={18} />
@@ -87,6 +84,28 @@ export function HomeClient() {
               Explore Services <ArrowRight size={18} />
             </Link>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Welcome Section */}
+      <section className="py-16 sm:py-20 bg-slate_blue-50">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
+          <AnimatedSection>
+            <div className="max-w-3xl mx-auto">
+              <h2 className="font-serif text-2xl sm:text-3xl text-slate_blue-800 mb-6">
+                Welcome to New Hope Counseling Ltd.
+              </h2>
+              <p className="text-slate_blue-600 leading-relaxed mb-4">
+                Life can be difficult sometimes. You may be feeling overwhelmed, stuck, anxious, hurt, or simply in need of someone who will truly listen. Whatever has brought you here, you are welcome.
+              </p>
+              <p className="text-slate_blue-600 leading-relaxed mb-4">
+                Our counseling practice is a place where people can come just as they are — without judgment or shame. Whether you are facing a major life challenge, navigating relationships, processing past experiences, or seeking personal growth, we are here to walk alongside you.
+              </p>
+              <p className="text-slate_blue-600 leading-relaxed">
+                Reaching out for support takes courage, and we are honored you are considering taking that step with us.
+              </p>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
@@ -129,9 +148,17 @@ export function HomeClient() {
               <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl text-slate_blue-800 mb-4">
                 What We Help With
               </h2>
-              <p className="text-slate_blue-600 max-w-2xl mx-auto">
-                A safe and supportive place to begin. We work with clients facing a variety of challenges.
-              </p>
+              <div className="max-w-2xl mx-auto space-y-4">
+                <p className="text-slate_blue-600">
+                  A safe and supportive place to begin.
+                </p>
+                <p className="text-slate_blue-600">
+                  Beginning counseling can feel like a big step. Our goal is to create a welcoming environment where individuals feel heard, respected, and supported.
+                </p>
+                <p className="text-slate_blue-600">
+                  We work with clients facing a variety of challenges, including:
+                </p>
+              </div>
             </div>
           </AnimatedSection>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -189,12 +216,15 @@ export function HomeClient() {
                   While our practice is rooted in Christian values such as compassion, grace, hope, and a Christ-centered perspective, we recognize that every person&apos;s beliefs and life journey are different.
                 </p>
                 <p className="text-slate_blue-600 leading-relaxed mb-4">
-                  Some clients come specifically seeking faith-based professional counseling that integrates prayer, Scripture, and spiritual guidance into the healing process. Others simply want thoughtful, professional counseling in a respectful environment.
+                  Some clients come specifically seeking faith-based professional counseling that integrates prayer, Scripture, and spiritual guidance into the healing process.
                 </p>
-                <p className="text-slate_blue-700 font-semibold text-lg">
+                <p className="text-slate_blue-600 leading-relaxed mb-4">
+                  Others simply want thoughtful, professional counseling in a respectful environment where faith is part of the counselor&apos;s background but not something that is imposed.
+                </p>
+                <p className="text-slate_blue-700 font-semibold text-lg mb-4">
                   All are welcome here.
                 </p>
-                <p className="text-slate_blue-600 leading-relaxed mt-4">
+                <p className="text-slate_blue-600 leading-relaxed">
                   Your counseling experience will always respect your comfort level, your beliefs, and your goals for therapy.
                 </p>
               </div>
@@ -241,7 +271,7 @@ export function HomeClient() {
                 className="border-2 border-gold-400/60 text-gold-300 px-6 py-3 rounded-md font-semibold hover:bg-gold-400/10 transition-all flex items-center gap-2"
               >
                 <Phone size={18} />
-                Call or Text: 224-517-6234
+                Call or Text: (224) 517-6234
               </a>
             </div>
           </AnimatedSection>

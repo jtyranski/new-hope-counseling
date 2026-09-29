@@ -64,7 +64,7 @@ export function HeaderWrapper() {
               className="ml-3 flex items-center gap-2 bg-gold-400 text-slate_blue-900 px-4 py-2 rounded-md text-sm font-semibold hover:bg-gold-300 transition-colors"
             >
               <Phone size={14} />
-              224-517-6234
+              (224) 517-6234
             </a>
           </nav>
 
@@ -105,7 +105,7 @@ export function HeaderWrapper() {
                 className="flex items-center gap-2 mt-3 bg-gold-400 text-slate_blue-900 px-4 py-3 rounded-md text-sm font-semibold"
               >
                 <Phone size={14} />
-                224-517-6234
+                (224) 517-6234
               </a>
             </div>
           </motion.div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AnimatedSection } from '../components/animated-section';
 import { PageHero } from '../components/page-hero';
@@ -19,6 +20,7 @@ import {
 const MESSAGE_CHAR_LIMIT = 150;
 
 export function ContactClient() {
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,6 +44,13 @@ export function ContactClient() {
     script.onload = () => setRecaptchaReady(true);
     document.head.appendChild(script);
   }, []);
+
+  useEffect(() => {
+    const subject = searchParams?.get('subject');
+    if (subject === 'appointment-request') {
+      setFormData((prev) => ({ ...prev, subject: 'Appointment Request' }));
+    }
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e?.target ?? {};
@@ -88,10 +97,56 @@ export function ContactClient() {
     <div>
       <PageHero
         title="Contact Us"
-        subtitle="Reaching out is the first step. We are here to help."
+        subtitle="Reaching out for counseling can feel like a big step, and our goal is to make the process as comfortable and straightforward as possible."
         imageSrc="https://images.pexels.com/photos/2850287/pexels-photo-2850287.jpeg?cs=srgb&dl=pexels-jplenio-2850287.jpg&fm=jpg"
         imageAlt="Peaceful sunset over mountains and water"
       />
+
+      {/* Getting Started Section */}
+      <section className="py-16 sm:py-20 bg-sage-50">
+        <div className="max-w-[800px] mx-auto px-4 sm:px-6">
+          <AnimatedSection>
+            <h2 className="font-serif text-2xl sm:text-3xl text-slate_blue-800 text-center mb-10">
+              Getting Started Is Simple
+            </h2>
+          </AnimatedSection>
+          <div className="space-y-8">
+            {[
+              {
+                step: '1',
+                title: 'Reach Out',
+                desc: (<>Contact us by phone or text <a href="tel:2245176234" className="text-gold-500 font-semibold hover:text-gold-600 transition-colors">(224) 517-6234</a>, email, or through the contact form below. Share what brings you to counseling and ask any questions you may have.</>),
+              },
+              {
+                step: '2',
+                title: 'Schedule Your First Appointment',
+                desc: 'We\'ll find a time that works for you. The first session is an opportunity to discuss your concerns, share relevant background, and talk about your goals.',
+              },
+              {
+                step: '3',
+                title: 'Begin the Counseling Process',
+                desc: 'Together, we\'ll develop a plan that supports your goals. Each counseling experience is tailored to the individual, couple, or family receiving services.',
+              },
+            ]?.map?.((item, i) => (
+              <AnimatedSection key={i} delay={i * 0.1}>
+                <div className="flex items-start gap-5 bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all">
+                  <div className="w-12 h-12 bg-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-slate_blue-900 font-bold text-lg">{item?.step ?? ''}</span>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-lg text-slate_blue-800 mb-1">{item?.title ?? ''}</h3>
+                    {typeof item?.desc === 'string' ? (
+                      <p className="text-slate_blue-600 text-sm leading-relaxed">{item?.desc}</p>
+                    ) : (
+                      <p className="text-slate_blue-600 text-sm leading-relaxed">{item?.desc}</p>
+                    )}
+                  </div>
+                </div>
+              </AnimatedSection>
+            )) ?? []}
+          </div>
+        </div>
+      </section>
 
       <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
@@ -100,7 +155,7 @@ export function ContactClient() {
             <div className="lg:col-span-2">
               <AnimatedSection>
                 <h2 className="font-serif text-2xl sm:text-3xl text-slate_blue-800 mb-6">
-                  Get in Touch
+                  Take the First Step
                 </h2>
                 <p className="text-slate_blue-600 leading-relaxed mb-8">
                   If you have questions or would like to schedule an appointment, we welcome you to reach out. Texting is often the quickest way to reach us, but you are always welcome to call.
@@ -113,7 +168,7 @@ export function ContactClient() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-slate_blue-800">Phone / Text</h3>
-                      <p className="text-gold-500 font-medium">224-517-6234</p>
+                      <p className="text-gold-500 font-medium">(224) 517-6234</p>
                       <p className="text-slate_blue-500 text-sm">Texting is often the quickest way to reach us</p>
                     </div>
                   </a>
@@ -287,44 +342,72 @@ export function ContactClient() {
         </div>
       </section>
 
-      {/* Getting Started Section */}
-      <section className="py-16 sm:py-20 bg-sage-50">
-        <div className="max-w-[800px] mx-auto px-4 sm:px-6">
+      {/* Our Location Section */}
+      <section className="py-16 sm:py-20 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
           <AnimatedSection>
-            <h2 className="font-serif text-2xl sm:text-3xl text-slate_blue-800 text-center mb-10">
-              Getting Started Is Simple
-            </h2>
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <h2 className="font-serif text-2xl sm:text-3xl text-slate_blue-800 mb-6">
+                Our Location
+              </h2>
+              <p className="text-slate_blue-600 leading-relaxed mb-4">
+                Counseling is available in person or through secure virtual sessions, allowing you to choose the format that best fits your comfort, schedule, and needs. Our goal is to make support accessible while still providing a calm, welcoming, and private counseling experience.
+              </p>
+            </div>
           </AnimatedSection>
-          <div className="space-y-8">
-            {[
-              {
-                step: '1',
-                title: 'Reach Out',
-                desc: 'Contact us by phone, text (224-517-6234), email, or through the contact form above. Share what brings you to counseling and ask any questions you may have.',
-              },
-              {
-                step: '2',
-                title: 'Schedule Your First Appointment',
-                desc: 'We\'ll find a time that works for you. The first session is an opportunity to discuss your concerns, share relevant background, and talk about your goals.',
-              },
-              {
-                step: '3',
-                title: 'Begin the Counseling Process',
-                desc: 'Together, we\'ll develop a plan that supports your goals. Each counseling experience is tailored to the individual, couple, or family receiving services.',
-              },
-            ]?.map?.((item, i) => (
-              <AnimatedSection key={i} delay={i * 0.1}>
-                <div className="flex items-start gap-5 bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-all">
-                  <div className="w-12 h-12 bg-gold-400 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-slate_blue-900 font-bold text-lg">{item?.step ?? ''}</span>
-                  </div>
-                  <div>
-                    <h3 className="font-serif text-lg text-slate_blue-800 mb-1">{item?.title ?? ''}</h3>
-                    <p className="text-slate_blue-600 text-sm leading-relaxed">{item?.desc ?? ''}</p>
-                  </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+            {/* Left Column */}
+            <div className="space-y-8">
+              <AnimatedSection>
+                <div>
+                  <h3 className="font-serif text-xl text-slate_blue-800 mb-4">
+                    A Quiet and Supportive Setting
+                  </h3>
+                  <p className="text-slate_blue-600 leading-relaxed">
+                    The counseling space is thoughtfully arranged to help clients feel at ease. Sessions take place in a confidential setting where you can speak openly and focus on your healing and personal growth. Whether you are coming for individual counseling, couples counseling, or family support, the environment is intended to feel warm, safe, and supportive.
+                  </p>
                 </div>
               </AnimatedSection>
-            )) ?? []}
+
+              <AnimatedSection delay={0.1}>
+                <div>
+                  <h3 className="font-serif text-xl text-slate_blue-800 mb-4">
+                    Easy and Accessible Visits
+                  </h3>
+                  <p className="text-slate_blue-600 leading-relaxed">
+                    The office location allows for convenient access for individuals and families in the surrounding community. Parking is available nearby, and the setting is designed to allow clients to arrive and leave with privacy and ease.
+                  </p>
+                </div>
+              </AnimatedSection>
+            </div>
+
+            {/* Right Column */}
+            <div className="space-y-8">
+              <AnimatedSection delay={0.2}>
+                <div>
+                  <h3 className="font-serif text-xl text-slate_blue-800 mb-4">
+                    A Place for Reflection and Growth
+                  </h3>
+                  <p className="text-slate_blue-600 leading-relaxed">
+                    Counseling often involves discussing meaningful and sometimes difficult parts of life. A peaceful setting can make it easier to slow down, reflect, and engage in the counseling process. Whether meeting in person or virtually, the goal remains the same—to provide a safe space where healing, understanding, and hope can grow.
+                  </p>
+                </div>
+              </AnimatedSection>
+
+              <AnimatedSection delay={0.3}>
+                <div className="bg-slate_blue-50 rounded-lg p-6">
+                  <p className="text-slate_blue-600 font-semibold mb-3">Our Office Location:</p>
+                  <p className="text-slate_blue-700 font-medium mb-1">37W040 Highland Ave</p>
+                  <p className="text-slate_blue-700 font-medium mb-3">Elgin, IL 60124</p>
+                  <p className="text-slate_blue-600 text-sm mb-4">
+                    Corner of Randall Road and Highland Ave, near I-90 and Route 20
+                  </p>
+                  <a href="tel:2245176234" className="text-gold-500 font-semibold hover:text-gold-600 transition-colors">(224) 517-6234</a>
+                  <p className="text-slate_blue-500 text-sm">Call or Text</p>
+                </div>
+              </AnimatedSection>
+            </div>
           </div>
         </div>
       </section>

@@ -26,7 +26,7 @@ export function Footer() {
             <h4 className="font-semibold text-gold-400 mb-4">Get in Touch</h4>
             <div className="space-y-3">
               <a href="tel:2245176234" className="flex items-center gap-2 text-sm hover:text-gold-300 transition-colors">
-                <Phone size={14} className="text-gold-400" /> 224-517-6234
+                <Phone size={14} className="text-gold-400" /> (224) 517-6234
               </a>
               <a href="mailto:newhope@counselingmail.com" className="flex items-center gap-2 text-sm hover:text-gold-300 transition-colors">
                 <Mail size={14} className="text-gold-400" /> newhope@counselingmail.com
